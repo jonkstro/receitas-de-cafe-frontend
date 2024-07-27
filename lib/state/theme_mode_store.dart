@@ -14,4 +14,13 @@ class ThemeModeStore extends ChangeNotifier {
     _themeMode = ThemeMode.light;
     notifyListeners();
   }
+
+  void toggleThemes(bool isDark) {
+    if (isDark) {
+      _themeMode = ThemeMode.light;
+    } else {
+      _themeMode = ThemeMode.dark;
+    }
+    notifyListeners();
+  }
 }

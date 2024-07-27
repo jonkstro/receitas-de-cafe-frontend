@@ -3,17 +3,13 @@ import 'package:receitas_de_cafe/utils/constants.dart';
 
 class CustomColorscheme {
   static const light = ColorScheme.light(
-    primary: primaryColor,
-    secondary: secondaryColor,
-    surface: backgroundPrimaryLight,
-    onSurface: backgroundSecondaryLight,
-    onPrimary: primaryColor,
+    primary: primaryLight,
+    secondary: secondaryLight,
+    surface: surfacePrimaryLight,
   );
   static const dark = ColorScheme.dark(
-    primary: backgroundSecondaryLight,
-    secondary: secondaryColor,
-    surface: backgroundPrimaryDark,
-    onSurface: backgroundSecondaryDark,
-    onPrimary: backgroundPrimaryLight,
+    primary: primaryDark,
+    secondary: secondaryDark,
+    surface: surfacePrimaryDark,
   );
 }

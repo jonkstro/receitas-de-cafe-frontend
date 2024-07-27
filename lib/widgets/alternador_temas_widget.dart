@@ -24,11 +24,10 @@ class _AlternadorTemasWidgetState extends ConsumerState<AlternadorTemasWidget> {
       isDarkMode = themeMode == ThemeMode.dark;
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Text('Switch between Dark and Light Themes:'),
-        const SizedBox(height: 20),
+        const Text('Trocar o tema:'),
         Switch(
           value: isDarkMode,
           onChanged: (bool value) {
@@ -37,8 +36,7 @@ class _AlternadorTemasWidgetState extends ConsumerState<AlternadorTemasWidget> {
           },
           activeColor: isDarkMode ? Colors.white : Colors.black,
           inactiveThumbColor: isDarkMode ? Colors.white : Colors.black,
-          inactiveTrackColor:
-              (isDarkMode ? Colors.white : Colors.black).withOpacity(0.5),
+          inactiveTrackColor: (Colors.white),
         ),
       ],
     );

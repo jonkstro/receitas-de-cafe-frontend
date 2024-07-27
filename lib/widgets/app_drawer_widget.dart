@@ -8,7 +8,13 @@ class AppDrawerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Drawer(
         child: Column(
-      children: [Text('Olá drawer'), AlternadorTemasWidget()],
+      children: [
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text('Configurações'),
+        ),
+        AlternadorTemasWidget(),
+      ],
     ));
   }
 }

@@ -14,7 +14,7 @@ final deviceStoreServiceProvider = Provider((ref) {
 
 final formProvider =
     StateNotifierProvider<FormularioReceitaStore, FormularioReceitaState>(
-  (ref) => FormularioReceitaStore(),
+  (ref) => FormularioReceitaStore(ref),
 );
 
 final themeModeProvider = ChangeNotifierProvider((ref) => ThemeModeStore());

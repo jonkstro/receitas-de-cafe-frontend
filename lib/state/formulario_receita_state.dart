@@ -3,13 +3,9 @@ import 'package:receitas_de_cafe/models/receita_model.dart';
 
 class FormularioReceitaState {
   final Receita receita;
-  final bool isLoading;
-  final String? error;
 
   FormularioReceitaState({
     required this.receita,
-    this.isLoading = false,
-    this.error,
   });
 
   // Método para criar o estado inicial do formulario
@@ -30,13 +26,9 @@ class FormularioReceitaState {
 
   FormularioReceitaState copyWith({
     Receita? receita,
-    bool? isLoading,
-    String? error,
   }) {
     return FormularioReceitaState(
       receita: receita ?? this.receita,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
     );
   }
 }

@@ -1,36 +1,37 @@
-/**
- * 
- * 
- * @override
-Widget build(BuildContext context) {
-  final formState = ref.watch(formProvider);
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:receitas_de_cafe/enums/loading_states.dart';
+import 'package:receitas_de_cafe/state/providers/providers.dart';
+import 'package:receitas_de_cafe/widgets/formulario_receita_widget.dart';
 
-  return Scaffold(
-    appBar: AppBar(title: Text('Nova Receita')),
-    body: formState.isLoading
-        ? CircularProgressIndicator()
-        : Form(
-            child: Column(
-              children: [
-                TextFormField(
-                  initialValue: formState.receita.nome,
-                  onChanged: (value) =>
-                      ref.read(formProvider.notifier).setNome(value),
-                  decoration: InputDecoration(labelText: 'Nome'),
+class CadastrarReceitaPage extends ConsumerWidget {
+  const CadastrarReceitaPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loadingState = ref.watch(loadingProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Adicionar Receita'),
+      ),
+      body: loadingState == LoadingStates.carregando
+          ? const Center(child: CircularProgressIndicator())
+          : loadingState == LoadingStates.erro
+              ? Center(
+                  child: Text(
+                    'Erro desconhecido.',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: Colors.red),
+                  ),
+                )
+              : Container(
+                  margin: const EdgeInsets.all(20),
+                  // Como é pra criar uma receita nova, não vamos passar nada
+                  child: const FormularioReceitaWidget(null),
                 ),
-                // Adicione campos para os outros atributos
-                ElevatedButton(
-                  onPressed: () =>
-                      ref.read(formProvider.notifier).submitForm(),
-                  child: Text('Salvar'),
-                ),
-              ],
-            ),
-          ),
-  );
+    );
+  }
 }
-4. Gerenciamento de Estados de Carregamento e Erro:
-O exemplo acima já mostra como lidar com estados de carregamento e erro usando o campo isLoading e error no FormState.
-
-Com essa estrutura, você pode gerenciar o estado do seu formulário e lidar com operações assíncronas, como salvar uma receita no backend.
- */

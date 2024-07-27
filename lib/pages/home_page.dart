@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:receitas_de_cafe/enums/loading_states.dart';
+import 'package:receitas_de_cafe/pages/cadastrar_receita_page.dart';
 import 'package:receitas_de_cafe/pages/lista_receitas_page.dart';
 import 'package:receitas_de_cafe/state/providers/providers.dart';
 import 'package:receitas_de_cafe/widgets/app_drawer_widget.dart';
@@ -58,7 +59,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const CadastrarReceitaPage(),
+                            ));
+                          },
                           child: const Text('CADASTRAR NOVA RECEITA'),
                         ),
                       ],

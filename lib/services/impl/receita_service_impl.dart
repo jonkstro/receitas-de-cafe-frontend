@@ -7,7 +7,6 @@ import 'package:receitas_de_cafe/services/receita_service.dart';
 import 'package:receitas_de_cafe/utils/constants.dart';
 
 class ReceitaServiceImpl implements ReceitaService {
-  static const urlBase = 'localhost:8080';
   static const Duration timeoutDuration = Duration(seconds: 30);
   @override
   Future<List<Receita>> listarReceitas() async {
@@ -29,7 +28,9 @@ class ReceitaServiceImpl implements ReceitaService {
         final List<dynamic> data = jsonDecode(decodedResponse);
 
         // Converte o JSON para uma lista de objetos Receita
-        return data.map((json) => Receita.fromJson(json)).toList();
+        return data.isNotEmpty
+            ? data.map((json) => Receita.fromJson(json)).toList()
+            : [];
       } else {
         // Lança uma exceção se o status code não for 200
         throw Exception('Falha ao carregar receitas: ${response.statusCode}');
@@ -44,9 +45,75 @@ class ReceitaServiceImpl implements ReceitaService {
   }
 
   @override
-  Future<Receita> obterReceita(int idReceita) {
-    // TODO: fazer as chamadas ao backend
-    throw UnimplementedError();
+  Future<Receita> atualizarReceita(int id, Receita receitaNova) async {
+    try {
+      final url = Uri.parse('$urlBackend/$id');
+      final body = jsonEncode(receitaNova.toJson());
+      final response = await http
+          .put(
+            url,
+            headers: headersBackend,
+            body: body,
+          )
+          .timeout(timeoutDuration);
+
+      if (response.statusCode == 200) {
+        final decodedResponse = utf8.decode(response.bodyBytes);
+        final data = jsonDecode(decodedResponse);
+        // TODO: Debugar aqui, pq vai ser atualizado o state com essa receita nova
+        return Receita.fromJson(data);
+      } else {
+        throw Exception('Falha ao atualizar receita: ${response.statusCode}');
+      }
+    } on TimeoutException {
+      throw Exception('A requisição ao servidor excedeu o tempo limite.');
+    } catch (error) {
+      throw Exception('Erro ao atualizar receita: $error');
+    }
+  }
+
+  @override
+  Future<Receita> criarReceita(Receita receita) async {
+    try {
+      final url = Uri.parse(urlBackend);
+      final body = jsonEncode(receita.toJson());
+      final response = await http
+          .post(
+            url,
+            headers: headersBackend,
+            body: body,
+          )
+          .timeout(timeoutDuration);
+
+      if (response.statusCode == 201) {
+        final decodedResponse = utf8.decode(response.bodyBytes);
+        final data = jsonDecode(decodedResponse);
+        // TODO: Debugar aqui, pq vai ser atualizado o state com essa receita nova
+        return Receita.fromJson(data);
+      } else {
+        throw Exception('Falha ao criar receita: ${response.statusCode}');
+      }
+    } on TimeoutException {
+      throw Exception('A requisição ao servidor excedeu o tempo limite.');
+    } catch (error) {
+      throw Exception('Erro ao criar receita: $error');
+    }
+  }
+
+  @override
+  Future<void> deletarReceita(int id) async {
+    try {
+      final url = Uri.parse('$urlBackend/$id');
+      final response = await http.delete(url).timeout(timeoutDuration);
+
+      if (response.statusCode != 204) {
+        throw Exception('Falha ao deletar receita: ${response.statusCode}');
+      }
+    } on TimeoutException {
+      throw Exception('A requisição ao servidor excedeu o tempo limite.');
+    } catch (error) {
+      throw Exception('Erro ao deletar receita: $error');
+    }
   }
 }
 /**

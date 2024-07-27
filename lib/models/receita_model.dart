@@ -40,7 +40,8 @@ class Receita {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      // Obs.: O id e createdAt o spring já cria só
+      'id': null,
       'nome': nome,
       'descricao': descricao,
       'ingredientes': ingredientes.toList(),
@@ -48,7 +49,7 @@ class Receita {
       'tempoPreparo': tempoPreparo,
       'dificuldade': dificuldade.name.toUpperCase(),
       'imagemBase64': imagemBase64,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': null,
     };
   }
 

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 const String urlBackend = 'http://192.168.1.103:8080/api/receitas';
 Map<String, String>? headersBackend = {
   'Content-Type': 'application/json; charset=utf-8',
-  'Accept-Encoding': 'gzip, deflate, br',
-  'Accept': '*/*'
 };
 
 // Constantes de cores:

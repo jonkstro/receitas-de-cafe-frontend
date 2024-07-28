@@ -8,21 +8,28 @@ class ListaReceitasPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Future<void> refreshReceitas() async {
+      await ref.read(receitasProvider.notifier).carregarReceitas();
+    }
+
     final receitas = ref.watch(receitasProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Receitas de Café')),
       body: receitas.isNotEmpty
-          ? ListView.builder(
-              itemCount: receitas.length,
-              itemBuilder: (context, index) {
-                final receita = receitas[index];
-                return ReceitaItemWidget(receita: receita);
-                //  ListTile(
-                //   title: Text(receita.nome),
-                //   subtitle: Text(receita.descricao),
-                // );
-              },
+          ? RefreshIndicator(
+              onRefresh: refreshReceitas,
+              child: ListView.builder(
+                itemCount: receitas.length,
+                itemBuilder: (context, index) {
+                  final receita = receitas[index];
+                  return ReceitaItemWidget(receita: receita);
+                  //  ListTile(
+                  //   title: Text(receita.nome),
+                  //   subtitle: Text(receita.descricao),
+                  // );
+                },
+              ),
             )
           : Center(
               child: Text(

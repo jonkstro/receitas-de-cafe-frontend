@@ -3,16 +3,15 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:receitas_de_cafe/models/receita_model.dart';
+import 'package:receitas_de_cafe/widgets/receita_item_action_buttons.dart';
 
 class ReceitaItemWidget extends StatelessWidget {
   final Receita receita;
   const ReceitaItemWidget({super.key, required this.receita});
 
   bool _isValidBase64(String base64String) {
-    // Validação básica para verificar se é uma string base64 válida
     try {
       final bytes = base64Decode(base64String);
-      // Verifica se a decodificação resulta em algum byte
       return bytes.isNotEmpty;
     } catch (e) {
       return false;
@@ -28,16 +27,19 @@ class ReceitaItemWidget extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: ListTile(
+        contentPadding: const EdgeInsets.all(8.0),
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).colorScheme.primary,
-          child: imageBytes != null
-              ? Image.memory(
-                  imageBytes,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                )
-              : const Icon(Icons.image_not_supported),
+          child: ClipOval(
+            child: imageBytes != null
+                ? Image.memory(
+                    imageBytes,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(Icons.image_not_supported),
+          ),
         ),
         title: Text('Nome: ${receita.nome}'),
         subtitle: Column(
@@ -55,8 +57,13 @@ class ReceitaItemWidget extends StatelessWidget {
             const Text('Instruções:',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             ...receita.instrucoes.map((instrucao) => Text('- $instrucao')),
+            const SizedBox(
+              height: 20,
+            ),
+            ReceitaItemActionButtons(receita: receita),
           ],
         ),
+        // trailing: const ReceitaItemActionButtons(),
       ),
     );
   }

@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:receitas_de_cafe/enums/dificuldade_preparo.dart';
 import 'package:receitas_de_cafe/enums/loading_states.dart';
 import 'package:receitas_de_cafe/models/receita_model.dart';
+import 'package:receitas_de_cafe/pages/lista_receitas_page.dart';
+import 'package:receitas_de_cafe/state/formulario_receita_store.dart';
 import 'package:receitas_de_cafe/state/providers/providers.dart';
 
 class FormularioReceitaWidget extends ConsumerStatefulWidget {
@@ -22,6 +28,8 @@ class _FormularioReceitaWidgetState
   late TextEditingController ingredientesController;
   late TextEditingController instrucoesController;
   late TextEditingController tempoPreparoController;
+  File? _selectedImage;
+  String? _imageBase64;
 
   @override
   void initState() {
@@ -35,6 +43,7 @@ class _FormularioReceitaWidgetState
         text: widget.receita?.instrucoes.join(', ') ?? '');
     tempoPreparoController = TextEditingController(
         text: widget.receita?.tempoPreparo.toString() ?? '');
+    _imageBase64 = widget.receita?.imagemBase64;
   }
 
   @override
@@ -47,10 +56,31 @@ class _FormularioReceitaWidgetState
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+        _imageBase64 = base64Encode(_selectedImage!.readAsBytesSync());
+        ref.read(formProvider.notifier).setImagemBase64(_imageBase64!);
+      });
+    }
+  }
+
+  bool _isBase64Valid(String base64String) {
+    try {
+      base64Decode(base64String);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final loadingState = ref.watch(loadingProvider);
-    final state = ref.watch(formProvider);
     final store = ref.read(formProvider.notifier);
 
     return loadingState == LoadingStates.carregando
@@ -72,7 +102,6 @@ class _FormularioReceitaWidgetState
                         }
                         return null;
                       },
-                      onChanged: (value) => store.setNome(value),
                     ),
                     TextFormField(
                       controller: descricaoController,
@@ -83,7 +112,6 @@ class _FormularioReceitaWidgetState
                         }
                         return null;
                       },
-                      onChanged: (value) => store.setDescricao(value),
                     ),
                     TextFormField(
                       controller: ingredientesController,
@@ -95,8 +123,6 @@ class _FormularioReceitaWidgetState
                         }
                         return null;
                       },
-                      onChanged: (value) => store
-                          .setIngredientes(value.trim().split(',').toSet()),
                     ),
                     TextFormField(
                       controller: instrucoesController,
@@ -108,8 +134,6 @@ class _FormularioReceitaWidgetState
                         }
                         return null;
                       },
-                      onChanged: (value) =>
-                          store.setInstrucoes(value.trim().split(',').toSet()),
                     ),
                     TextFormField(
                       controller: tempoPreparoController,
@@ -125,8 +149,6 @@ class _FormularioReceitaWidgetState
                         }
                         return null;
                       },
-                      onChanged: (value) =>
-                          store.setTempoPreparo(int.parse(value)),
                     ),
                     DropdownButtonFormField<DificuldadePreparo>(
                       hint: const Text('Selecione a dificuldade'),
@@ -147,10 +169,33 @@ class _FormularioReceitaWidgetState
                       },
                     ),
                     const SizedBox(height: 20),
+                    _selectedImage != null
+                        ? Image.file(_selectedImage!)
+                        : widget.receita?.imagemBase64 != null &&
+                                _isBase64Valid(widget.receita!.imagemBase64)
+                            ? Image.memory(
+                                base64Decode(widget.receita!.imagemBase64))
+                            : Container(
+                                margin: const EdgeInsets.all(8),
+                                child: const Text(
+                                  'Imagem inválida ou não disponível',
+                                ),
+                              ),
+                    ElevatedButton(
+                      onPressed: _pickImage,
+                      child: const Text('Selecionar Imagem'),
+                    ),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
+                          // Assegura que o store é atualizado antes de submeter
+                          _atualizarDadosFormulario(store);
                           await store.submitForm(widget.receita?.id);
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ListaReceitasPage(),
+                          ));
                         }
                       },
                       child: Text(widget.receita == null
@@ -162,5 +207,17 @@ class _FormularioReceitaWidgetState
               ),
             ),
           );
+  }
+
+  void _atualizarDadosFormulario(FormularioReceitaStore store) {
+    store.setNome(nomeController.text);
+    store.setDescricao(descricaoController.text);
+    store
+        .setIngredientes(ingredientesController.text.trim().split(',').toSet());
+    store.setInstrucoes(instrucoesController.text.trim().split(',').toSet());
+    store.setTempoPreparo(int.parse(tempoPreparoController.text));
+    if (_imageBase64 != null) {
+      store.setImagemBase64(_imageBase64!);
+    }
   }
 }

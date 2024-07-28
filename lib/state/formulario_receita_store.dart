@@ -37,13 +37,14 @@ class FormularioReceitaStore extends StateNotifier<FormularioReceitaState> {
         receita: state.receita.copyWith(dificuldade: dificuldade));
   }
 
+  void setImagemBase64(String imagemBase64) {
+    state = state.copyWith(
+        receita: state.receita.copyWith(imagemBase64: imagemBase64));
+  }
+
   Future<void> submitForm(int? id) async {
     id == null
-        ? await ref
-            .watch(receitasProvider.notifier)
-            .adicionarReceita(state.receita)
-        : await ref
-            .watch(receitasProvider.notifier)
-            .editarReceita(id, state.receita);
+        ? ref.watch(receitasProvider.notifier).adicionarReceita(state.receita)
+        : ref.watch(receitasProvider.notifier).editarReceita(id, state.receita);
   }
 }

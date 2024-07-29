@@ -60,7 +60,6 @@ class ReceitaServiceImpl implements ReceitaService {
       if (response.statusCode == 200) {
         final decodedResponse = utf8.decode(response.bodyBytes);
         final data = jsonDecode(decodedResponse);
-        // TODO: Debugar aqui, pq vai ser atualizado o state com essa receita nova
         return Receita.fromJson(data);
       } else {
         throw Exception('Falha ao atualizar receita: ${response.statusCode}');
@@ -88,7 +87,6 @@ class ReceitaServiceImpl implements ReceitaService {
       if (response.statusCode == 201) {
         final decodedResponse = utf8.decode(response.bodyBytes);
         final data = jsonDecode(decodedResponse);
-        // TODO: Debugar aqui, pq vai ser atualizado o state com essa receita nova
         return Receita.fromJson(data);
       } else {
         throw Exception('Falha ao criar receita: ${response.statusCode}');
@@ -116,18 +114,3 @@ class ReceitaServiceImpl implements ReceitaService {
     }
   }
 }
-/**
- * final response = await http.post(
-      _url,
-      body: jsonEncode({
-        'nome': produto.nome,
-        'descricao': produto.descricao,
-        'preco': produto.preco,
-        'imagemUrl': produto.imagemUrl,
-      }),
-      headers: {
-        "content-type": "application/json",
-        "accept": "application/json",
-      },
-    );
- */
